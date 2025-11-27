@@ -1,7 +1,10 @@
-import { component$, isDev } from "@builder.io/qwik";
-import { QwikCityProvider, RouterOutlet } from "@builder.io/qwik-city";
-import { RouterHead } from "./components/router-head/router-head";
+import { FlowbiteProvider, FlowbiteProviderHeader } from 'flowbite-qwik';
 
+import { component$, isDev } from '@builder.io/qwik';
+import { QwikCityProvider, RouterOutlet } from '@builder.io/qwik-city';
+import { RouterHead } from './components/router-head/router-head';
+
+import './global.css'
 export default component$(() => {
   /**
    * The root of a QwikCity site always start with the <QwikCityProvider> component,
@@ -20,11 +23,13 @@ export default component$(() => {
             href={`${import.meta.env.BASE_URL}manifest.json`}
           />
         )}
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fordus/shadcn-classless@main/dist/shadcn-classless.css" />
+        <FlowbiteProviderHeader />
         <RouterHead />
       </head>
       <body lang="en">
-        <RouterOutlet />
+        <FlowbiteProvider theme="blue" toastPosition="top-right">
+          <RouterOutlet />
+        </FlowbiteProvider>
       </body>
     </QwikCityProvider>
   );
