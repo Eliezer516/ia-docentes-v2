@@ -23,7 +23,7 @@ export default component$(() => {
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fordus/shadcn-classless@main/dist/shadcn-classless.css" />
         <RouterHead />
       </head>
-      <body lang="en">
+      <body lang="es">
         <RouterOutlet />
       </body>
     </QwikCityProvider>
