@@ -20,10 +20,9 @@ export default component$(() => {
             href={`${import.meta.env.BASE_URL}manifest.json`}
           />
         )}
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fordus/shadcn-classless@main/dist/shadcn-classless.css" />
         <RouterHead />
       </head>
-      <body lang="es">
+      <body lang="es" class="container">
         <RouterOutlet />
       </body>
     </QwikCityProvider>

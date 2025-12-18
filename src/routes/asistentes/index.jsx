@@ -1,9 +1,12 @@
 import styles from './index.css?inline'
-import { component$, useStylesScoped$, useSignal } from '@builder.io/qwik';
-import { routeLoader$, Form, routeAction$ } from '@builder.io/qwik-city';
+import { component$, useStylesScoped$, useSignal, useTask$, useVisibleTask$, $ } from '@builder.io/qwik';
+import { routeLoader$, Form, routeAction$, server$ } from '@builder.io/qwik-city';
 import axios from 'axios'
+import { Card } from '~/components/Card.jsx'
+import { Toast } from '~/components/bootstrap/toast.jsx'
+import { Toaster, toast} from 'qwik-sonner'
 
- 
+
 export const useObtenerAsistentes = routeLoader$(async () => {
   const apiUrl = "https://api-ia-docentes-v2.yonaikereliezerbarretomaterano.workers.dev/asistentes"
   const response = await axios(apiUrl);
@@ -42,56 +45,79 @@ export const useEliminarAsistente = routeAction$( async ({ id }) => {
   }
 })
 
+export const useEditarAsistente = routeAction$( async ({ id, titulo, instruccion }) => {
+  const apiUrl = `https://api-ia-docentes-v2.yonaikereliezerbarretomaterano.workers.dev/asistentes/${id}`
+  try {
+    await axios.put(apiUrl, { titulo, instruccion })
+    return { success: true }
+  } catch (err) {
+    return {
+      success: false,
+      err
+    }
+  }
+})
+
 export default component$(() => {
   useStylesScoped$(styles)
   const asistentes = useObtenerAsistentes()
   const añadirAsistente = useAñadirAsistente()
+  const editarAsistente = useEditarAsistente()
   const eliminarAsistente = useEliminarAsistente()
-  const modalRef = useSignal()
-  // useTask$(({ track }) => {
-  //   track(() => añadirAsistente.value?.success)
-  //   server$(() => {
-  //     console.log(asistentes.value);
-  //   })();
-  // });
+
+  const offcanvasRef = useSignal()
+  const offcanvasInstance = useSignal()
+
+
+  useVisibleTask$( async () => {
+    const bootstrap = await import("bootstrap")
+    if (offcanvasRef.value) {
+      offcanvasInstance.value = new bootstrap.Offcanvas(offcanvasRef.value)
+    }
+  })
   return (
     <section class="section bright">
-      <nav>
-        <h3>Asistentes</h3>
-        <button onClick$={() => modalRef.showModal()} >Nuevo</button>
+      <nav class="navbar bg-body-tertiary">
+        <div class="container-fluid">
+          <h5 class="navbar-brand">Asistentes</h5>
+          <ul class="navbar-nav">
+            <li class="navbar-item">
+              <button onClick$={() => offcanvasInstance.value.show()} class="btn btn-primary" type="button" >
+                Nuevo
+              </button>
+            </li>
+          </ul>
+        </div>
       </nav>
-      <dialog ref={modalRef} drawer id="drawerExample">
-         <header>
-           <h3>Confirm your action!</h3>
-         </header>
-         <Form action={añadirAsistente}>
-           <label>
-             Titulo
-             <input type="text" name="titulo" placeholder="Nombre del asistente" />
-           </label>
-           <label>
-             Instruccion
-             <textarea name="instruccion" placeholder="Instrucciones detalladas del bot" rows={5}></textarea>
-           </label>
-           <button>Añadir</button>
-           {añadirAsistente.value?.success && modalRef.close()}
-         </Form>
-       </dialog>
+       <div ref={offcanvasRef} class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasAñadirAsistente" aria-labelledby="offcanvasAñadirAsistenteLabel">
+         <div class="offcanvas-header">
+           <h5 class="offcanvas-title" id="offcanvasExampleLabel">Nuevo asistente</h5>
+           <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+         </div>
+         <div class="offcanvas-body">
+          <Form action={añadirAsistente}>
+            <div class="mb-3">
+              <label>Titulo</label>
+              <input class="form-control" type="text" name="titulo" placeholder="Nombre del asistente" />
+            </div>
+            <div class="mb-3">
+              <label>Instruccion</label>
+              <textarea class="form-control" name="instruccion" placeholder="Instrucciones detalladas del bot" rows={7}></textarea>
+            </div>
+            <button class="btn btn-primary">Añadir</button>
+            {añadirAsistente.value?.success && offcanvasInstance.value.hide()}
+          </Form>
+         </div>
+       </div>
        <div class="contenedor-asistentes">
-        {asistentes.value.map((asistente) => (
-          <article key={asistente.id}>
-            <h3>{asistente.titulo}</h3>
-            <footer>
-              <button>Editar</button>
-              <button onClick$={ async () => {
-                const { id } = asistente
-                const { value } = await eliminarAsistente.submit({ id })
-                console.log(value)
-              }}>Eliminar</button>
-            </footer>
-          </article>
+        {asistentes.value.map(({ titulo, instruccion, id}) => (
+          <Card key={id} titulo={titulo} instruccion={instruccion} id={id} editar={editarAsistente} eliminar={eliminarAsistente} tipo="asistente" />
         )).reverse()}
        </div>
     </section>
   );
 });
+
+export const head = {
+  title: "Lista de asistentes"
+}
