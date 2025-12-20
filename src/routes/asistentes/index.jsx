@@ -4,7 +4,6 @@ import { routeLoader$, Form, routeAction$, server$ } from '@builder.io/qwik-city
 import axios from 'axios'
 import { Card } from '~/components/Card.jsx'
 import { Toast } from '~/components/bootstrap/toast.jsx'
-import { Toaster, toast} from 'qwik-sonner'
 
 
 export const useObtenerAsistentes = routeLoader$(async () => {

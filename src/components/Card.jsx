@@ -1,8 +1,8 @@
 import { component$, useStylesScoped$, useSignal, useTask$, useVisibleTask$, $ } from '@builder.io/qwik';
-import { Form } from '@builder.io/qwik-city';
+import { Form, Link } from '@builder.io/qwik-city';
 
 
-export const Card = component$(({ tipo, titulo, instruccion, id, editar, eliminar }) => {
+export const Card = component$(({ tipo, titulo, instruccion, id, editar, eliminar, asistentes }) => {
   if (tipo === "asistente") {
     const styles = {
       textoLimitado: {
@@ -67,6 +67,11 @@ export const Card = component$(({ tipo, titulo, instruccion, id, editar, elimina
       <article class="card w-50">
         <div class="card-body">
           <h3 class="card-title">Bienvenido</h3>
+          <div class="list-group">
+            {asistentes.value.map(asistente => (
+              <Link href={`/asistente/${asistente.id}`} key={asistente.id} class="list-group-item list-group-item-action">{asistente.titulo}</Link>
+            ))}  
+          </div>
         </div>
       </article>
     )
