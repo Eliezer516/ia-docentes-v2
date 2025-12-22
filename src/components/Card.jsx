@@ -1,21 +1,22 @@
-import { component$, useStylesScoped$, useSignal, useTask$, useVisibleTask$, $ } from '@builder.io/qwik';
+import { component$, useStylesScoped$, useSignal, useTask$, useVisibleTask$, useStyles$, $ } from '@builder.io/qwik';
 import { Form, Link } from '@builder.io/qwik-city';
 
-
 export const Card = component$(({ tipo, titulo, instruccion, id, editar, eliminar, asistentes }) => {
-  const styles = {
-    textoLimitado: {
-      "display": "-webkit-box",
-      "-webkit-line-clamp": "3",
-      "-webkit-box-orient": "vertical",
-      "overflow": "hidden",
-      "text-overflow": "ellipsis"
-    },
-    cardWidth: {
-      "width": "100%",
-      "max-width": "500px"
+  useStyles$(`
+    .texto-limitado {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis
     }
-  }
+
+    .card-width {
+      width: 100%;
+      max-width: 500px;
+      margin: 0 10px;
+    }
+  `)
 
   if (tipo === "asistente") {
 
@@ -34,7 +35,7 @@ export const Card = component$(({ tipo, titulo, instruccion, id, editar, elimina
         <article class="card">
           <div class="card-body">
             <h3 class="card-title">{titulo}</h3>
-            <p class="card-text" style={styles.textoLimitado}>{instruccion}</p>
+            <p class="card-text texto-limitado">{instruccion}</p>
           </div>
           <footer class="card-footer text-end">
             <button class="btn btn-primary" style={{ "margin-right": "10px"}} onClick$={() => offcanvasInstance.value?.show()} >Editar</button>
@@ -69,7 +70,7 @@ export const Card = component$(({ tipo, titulo, instruccion, id, editar, elimina
 
   if (tipo === "asistentes") {
     return (
-      <article class="card" style={styles.cardWidth}>
+      <article class="card card-width">
         <div class="card-body">
           <h3 class="card-title">Bienvenido</h3>
           <div class="list-group">

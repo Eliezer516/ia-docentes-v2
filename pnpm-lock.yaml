@@ -20,6 +20,9 @@ importers:
       bootstrap:
         specifier: '5'
         version: 5.3.8(@popperjs/core@2.11.8)
+      copy-text-to-clipboard:
+        specifier: ^3.2.2
+        version: 3.2.2
       markdown-it:
         specifier: ^14.1.0
         version: 14.1.0
@@ -54,6 +57,9 @@ importers:
       prettier:
         specifier: 3.6.2
         version: 3.6.2
+      qwik-sonner:
+        specifier: ^1.0.3
+        version: 1.0.3
       typescript:
         specifier: 5.4.5
         version: 5.4.5
@@ -2247,6 +2253,10 @@ packages:
   copy-anything@2.0.6:
     resolution: {integrity: sha512-1j20GZTsvKNkc4BY3NpMOM8tt///wY3FpIzozTOFO2ffuZcV61nojHXVKIy3WM+7ADCy5FVhdZYHYDdgTU0yJw==}
 
+  copy-text-to-clipboard@3.2.2:
+    resolution: {integrity: sha512-T6SqyLd1iLuqPA90J5N4cTalrtovCySh58iiZDGJ6FGznbclKh4UI+FGacQSgFzwKG77W7XT5gwbVEbd9cIH1A==}
+    engines: {node: '>=12'}
+
   core-js-compat@3.47.0:
     resolution: {integrity: sha512-IGfuznZ/n7Kp9+nypamBhvwdwLsW6KC8IOaURw2doAK5e98AG3acVLdh0woOnEqCfUtS+Vu882JE4k/DAm3ItQ==}
 
@@ -4301,6 +4311,10 @@ packages:
   quick-lru@5.1.1:
     resolution: {integrity: sha512-WuyALRjWPDGtt/wzJiadO5AXY+8hZ80hVpe6MyivgraREW751X3SbhRvG3eLKOYN+8VEvqLcf3wdnt44Z4S4SA==}
     engines: {node: '>=10'}
+
+  qwik-sonner@1.0.3:
+    resolution: {integrity: sha512-n3StJm/5ZLgnzPeVJWQvJz2+gKxuov37VcbeeaXwWJA+bUgX4t0miAkOZDjgTGmyzTLST3PsN2fnSWeelVGTuA==}
+    engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
 
   range-parser@1.2.1:
     resolution: {integrity: sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg==}
@@ -7559,6 +7573,8 @@ snapshots:
     dependencies:
       is-what: 3.14.1
 
+  copy-text-to-clipboard@3.2.2: {}
+
   core-js-compat@3.47.0:
     dependencies:
       browserslist: 4.28.0
@@ -10162,6 +10178,8 @@ snapshots:
   queue-microtask@1.2.3: {}
 
   quick-lru@5.1.1: {}
+
+  qwik-sonner@1.0.3: {}
 
   range-parser@1.2.1: {}
 

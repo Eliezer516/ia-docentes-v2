@@ -11,7 +11,7 @@ export default component$(() => {
   const loc = useLocation()
 
   return (
-    <main class="container" style={loc.url.pathname !== "/" && { "--bs-gutter-x": "0" }}>
+    <main class="container" style={{ "--bs-gutter-x": "0" }}>
       <Slot />
     </main>
   );

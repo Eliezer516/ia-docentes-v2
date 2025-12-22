@@ -161,7 +161,7 @@ export default component$(() => {
   return (
     <article class="card">
       <header class="card-header">
-        <h3>{asistente.value.titulo}</h3>
+        <h5>{asistente.value.titulo}</h5>
       </header>
       <div class="card-body" ref={contenedorMensajesRef}>        
         {mensajes.value?.map(mensaje => (
