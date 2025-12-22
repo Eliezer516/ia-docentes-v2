@@ -103,7 +103,7 @@ export default component$(() => {
               <label>Instruccion</label>
               <textarea class="form-control" name="instruccion" placeholder="Instrucciones detalladas del bot" rows={7}></textarea>
             </div>
-            <button class="btn btn-primary">Añadir</button>
+            <button class="btn btn-primary w-100">Añadir</button>
             {añadirAsistente.value?.success && offcanvasInstance.value.hide()}
           </Form>
          </div>

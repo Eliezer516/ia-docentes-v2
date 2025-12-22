@@ -78,6 +78,7 @@ export default component$(() => {
   const mensajeDelUsuario = useSignal("")
   const mensajes = useSignal(historial.value)
   const contenedorMensajesRef = useSignal()
+  const botonDeEnviar = useSignal()
 
   useVisibleTask$(({ track }) => {
       track(() => mensajes.value); // Rastrea cambios en la lista de mensajes
@@ -99,6 +100,7 @@ export default component$(() => {
     const mensajeTexto = mensajeDelUsuario.value.trim();
     const idAsistente = asistente.value.id;
     const instruccion = asistente.value.instruccion;
+    botonDeEnviar.value.disabled = true
 
     if (!mensajeTexto) return;
 
@@ -116,7 +118,7 @@ export default component$(() => {
     // 3. Agregar estado de carga (Placeholder)
     mensajes.value = [
       ...mensajes.value,
-      { role: "assistant", content: "escribiendo...", isLoading: true },
+      { role: "assistant", content: "Cargando...", isLoading: true },
     ];
 
     try {
@@ -132,11 +134,13 @@ export default component$(() => {
         // 5. Reemplazar el "escribiendo..." con la respuesta real
         mensajes.value = mensajes.value.map((msg, i) =>
           i === mensajes.value.length - 1 
-            ? { role: "assistant", content: respuestaIA } 
+            ? { role: "assistant", content: respuestaIA, isLoading: false } 
             : msg
         );
 
         // 6. Guardar respuesta de la IA en DB
+
+        botonDeEnviar.value.disabled = false
 
         await guardarMensajeEnElHistorial.submit({ 
           asistente_id: idAsistente, 
@@ -150,6 +154,7 @@ export default component$(() => {
       // 7. Manejo de errores: Eliminar el placeholder de carga si falla
       mensajes.value = mensajes.value.filter((_, i) => i !== mensajes.value.length - 1);
       alert("No se pudo obtener respuesta del asistente.");
+      botonDeEnviar.value.disabled = false
     }
   });
 
@@ -170,8 +175,8 @@ export default component$(() => {
           <input type="text" value={asistente.value.instruccion} name="instruccion" hidden />
           <textarea bind:value={mensajeDelUsuario} class="form-control" name="mensaje" placeholder="Mensaje para el bot" rows={2}></textarea>
         </div>
-        <button onClick$={() => enviarMensaje()} class="btn btn-primary">Enviar</button>
-      </footer>
+        <button ref={botonDeEnviar} onClick$={() => enviarMensaje()} class="btn btn-primary w-100">Enviar</button>
+      </footer> 
     </article>
   )
 });

@@ -58,7 +58,7 @@ export const Card = component$(({ tipo, titulo, instruccion, id, editar, elimina
                <textarea class="form-control" value={instruccion} name="instruccion" placeholder="Instrucciones detalladas del bot" rows={7}></textarea>
              </div>
              {/*<button onClick$={() => offcanvasInstance.value?.hide()} class="btn btn-primary">Editar</button>*/}
-             <button class="btn btn-primary">Editar</button>
+             <button class="btn btn-primary w-100">Editar</button>
              {editar.value?.success && offcanvasInstance.value?.hide()}
            </Form>
           </div>

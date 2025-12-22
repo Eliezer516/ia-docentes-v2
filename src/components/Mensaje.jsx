@@ -10,7 +10,14 @@ export const Mensaje = component$(({ mensaje }) => {
     <div class={`alert ${mensaje.role === "user" ? "alert-primary" : "alert-secondary"}`}>
       <h5 class="alert-heading">{mensaje.role === "user" ? "Tu" : "Bot"}</h5>
       <hr />
-      <div dangerouslySetInnerHTML={mensaje.role === "assistant" ? md.render(mensaje.content) : mensaje.content}></div>
+      {mensaje.isLoading ? (
+        <div class="d-flex align-items-center">
+          <strong role="status">{mensaje.content}</strong>
+          <div class="spinner-border spinner-border-sm ms-auto" aria-hidden="true"></div>
+        </div>
+      ) : (
+        <div dangerouslySetInnerHTML={mensaje.role === "assistant" ? md.render(mensaje.content) : mensaje.content}></div>
+      )}
     </div>
   )
 })
