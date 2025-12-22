@@ -3,16 +3,21 @@ import { Form, Link } from '@builder.io/qwik-city';
 
 
 export const Card = component$(({ tipo, titulo, instruccion, id, editar, eliminar, asistentes }) => {
-  if (tipo === "asistente") {
-    const styles = {
-      textoLimitado: {
-        "display": "-webkit-box",
-        "-webkit-line-clamp": "3",
-        "-webkit-box-orient": "vertical",
-        "overflow": "hidden",
-        "text-overflow": "ellipsis"
-      }
+  const styles = {
+    textoLimitado: {
+      "display": "-webkit-box",
+      "-webkit-line-clamp": "3",
+      "-webkit-box-orient": "vertical",
+      "overflow": "hidden",
+      "text-overflow": "ellipsis"
+    },
+    cardWidth: {
+      "width": "100%",
+      "max-width": "500px"
     }
+  }
+
+  if (tipo === "asistente") {
 
     const offcanvasRef = useSignal()
     const offcanvasInstance = useSignal()
@@ -64,7 +69,7 @@ export const Card = component$(({ tipo, titulo, instruccion, id, editar, elimina
 
   if (tipo === "asistentes") {
     return (
-      <article class="card w-50">
+      <article class="card" style={styles.cardWidth}>
         <div class="card-body">
           <h3 class="card-title">Bienvenido</h3>
           <div class="list-group">

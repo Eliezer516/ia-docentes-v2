@@ -5,4 +5,5 @@
 }
 .card-body {
   overflow-y: scroll;
+  scroll-padding-top: 30px;
 }
