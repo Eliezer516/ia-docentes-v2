@@ -180,3 +180,10 @@ export default component$(() => {
     </article>
   )
 });
+
+export const head = ({ resolveValue }) => {
+  const title = resolveValue(useObtenerAsistentePorId)
+  return {
+    title: title.titulo
+  }
+}

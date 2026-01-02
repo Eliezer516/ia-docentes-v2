@@ -1,8 +1,10 @@
-import { component$, useStyles$ } from '@builder.io/qwik'
+import { component$, useStyles$, useSignal, $ } from '@builder.io/qwik'
 import MarkdownIt from "markdown-it";
 import { katex } from '@mdit/plugin-katex'
 import copy from 'copy-text-to-clipboard';
 import TablerCopy from '~/icons/TablerCopy.tsx'
+import Download from '~/icons/Download.tsx'
+import { snapdom } from '@zumer/snapdom'
 
 export const Mensaje = component$(({ mensaje }) => {
   useStyles$(`
@@ -10,16 +12,31 @@ export const Mensaje = component$(({ mensaje }) => {
       overflow-x: auto;
     }
   `)
+
   const md = MarkdownIt().use(katex, {
     allowInlineWithSpace: true
   })
+
+    const mensajeRef = useSignal()
+
+  const descargarMensaje = $(async (id) => {
+    mensajeRef.value?.removeAttribute("q:key")
+    mensajeRef.value?.removeAttribute("q:id")
+    await snapdom.download(mensajeRef.value, { format: "jpg", filename: id })
+  })
+
   return (
-    <div class={`alert ${mensaje.role === "user" ? "alert-primary" : "alert-secondary"}`}>
+    <div ref={mensajeRef} class={`alert ${mensaje.role === "user" ? "alert-primary" : "alert-secondary"}`}>
       <div class="d-flex align-items-center">
         <h5 class="alert-heading">{mensaje.role === "user" ? "Tu" : "Bot"}</h5>
-        <button class="btn btn-primary ms-auto" onClick$={() => copy(mensaje.content)} >
-          <TablerCopy />
-        </button>
+        <div class="ms-auto">
+          <button class="btn btn-primary me-1" onClick$={() => copy(mensaje.content)} >
+            <TablerCopy />
+          </button>
+          <button class="btn btn-primary" onClick$={() => descargarMensaje(mensaje.id)} >
+            <Download />
+          </button>
+        </div>
       </div>
       <hr />
       {mensaje.isLoading ? (

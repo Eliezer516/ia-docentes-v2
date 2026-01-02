@@ -66,12 +66,22 @@ export default component$(() => {
 
   const offcanvasRef = useSignal()
   const offcanvasInstance = useSignal()
+  const formRef = useSignal()
 
 
   useVisibleTask$( async () => {
     const bootstrap = await import("bootstrap")
     if (offcanvasRef.value) {
       offcanvasInstance.value = new bootstrap.Offcanvas(offcanvasRef.value)
+    }
+  })
+
+  useVisibleTask$(({ track }) => {
+    track(() => añadirAsistente.value)
+
+    if (añadirAsistente.value?.success) {
+      offcanvasInstance.value.hide()
+      formRef.value?.reset()
     }
   })
   return (
@@ -94,7 +104,7 @@ export default component$(() => {
            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
          </div>
          <div class="offcanvas-body">
-          <Form action={añadirAsistente}>
+          <Form action={añadirAsistente} ref={formRef}>
             <div class="mb-3">
               <label>Titulo</label>
               <input class="form-control" type="text" name="titulo" placeholder="Nombre del asistente" />
@@ -103,13 +113,17 @@ export default component$(() => {
               <label>Instruccion</label>
               <textarea class="form-control" name="instruccion" placeholder="Instrucciones detalladas del bot" rows={7}></textarea>
             </div>
-            <button class="btn btn-primary w-100">Añadir</button>
-            {añadirAsistente.value?.success && offcanvasInstance.value.hide()}
+            <button 
+              disabled={añadirAsistente.isRunning} 
+              class="btn btn-primary w-100"
+            >
+              {añadirAsistente.isRunning ? 'Guardando...' : 'Enviar'}
+            </button>
           </Form>
          </div>
        </div>
        <div class="contenedor-asistentes">
-        {asistentes.value.map(({ titulo, instruccion, id}) => (
+        {asistentes.value?.map(({ titulo, instruccion, id}) => (
           <Card key={id} titulo={titulo} instruccion={instruccion} id={id} editar={editarAsistente} eliminar={eliminarAsistente} tipo="asistente" />
         )).reverse()}
        </div>

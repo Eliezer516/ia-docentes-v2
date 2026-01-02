@@ -14,6 +14,9 @@ importers:
       '@mdit/plugin-katex':
         specifier: ^0.24.1
         version: 0.24.1(markdown-it@14.1.0)
+      '@zumer/snapdom':
+        specifier: ^2.0.1
+        version: 2.0.1
       axios:
         specifier: ^1.13.2
         version: 1.13.2
@@ -1878,6 +1881,9 @@ packages:
 
   '@web3-storage/multipart-parser@1.0.0':
     resolution: {integrity: sha512-BEO6al7BYqcnfX15W2cnGR+Q566ACXAT9UQykORCWW80lmkpWsnEob6zJS1ZVBKsSJC8+7vJkHwlp+lXG1UCdw==}
+
+  '@zumer/snapdom@2.0.1':
+    resolution: {integrity: sha512-78/qbYl2FTv4H6qaXcNfAujfIOSzdvs83NW63VbyC9QA3sqNPfPvhn4xYMO6Gy11hXwJUEhd0z65yKiNzDwy9w==}
 
   abbrev@1.1.1:
     resolution: {integrity: sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==}
@@ -7171,6 +7177,8 @@ snapshots:
       ts-morph: 12.0.0
 
   '@web3-storage/multipart-parser@1.0.0': {}
+
+  '@zumer/snapdom@2.0.1': {}
 
   abbrev@1.1.1: {}
 
