@@ -25,18 +25,20 @@ export const useObtenerHistorial = routeLoader$(async ({ params }) => {
 
 export const useMensajeAlAsistente = routeAction$( async ({ instruccion, mensaje }) => {
   const openai = new OpenAI({
-    baseURL: "https://text.pollinations.ai/openai",
-    apiKey: "qKR8cZHgwG6tByan",
-    dangerouslyAllowBrowser: true,
+    baseURL: "https://openrouter.ai/api/v1",
+    apiKey: "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",
   })
 
   try {
-    const response = await openai.responses.create({
-      model: "gemini",
+    const response = await openai.chat.completions.create({
+      model: "deepseek/deepseek-r1-0528:free",
       messages: [
         { role: 'system', content: instruccion },
         { role: 'user', content: mensaje }
-      ]
+      ],
+      reasoning: {
+        effort: "none"
+      }
     })
     return {
       success: true,
@@ -45,7 +47,8 @@ export const useMensajeAlAsistente = routeAction$( async ({ instruccion, mensaje
   } catch (error) {
     console.error("Error en la acción AI:", error);
     return {
-      success: false
+      success: false,
+      error
     }
   }
 })
@@ -153,7 +156,7 @@ export default component$(() => {
     } catch (error) {
       // 7. Manejo de errores: Eliminar el placeholder de carga si falla
       mensajes.value = mensajes.value.filter((_, i) => i !== mensajes.value.length - 1);
-      alert("No se pudo obtener respuesta del asistente.");
+      alert("No se pudo obtener respuesta del asistente. " + mensajeAlAsistente.value?.error);
       botonDeEnviar.value.disabled = false
     }
   });
