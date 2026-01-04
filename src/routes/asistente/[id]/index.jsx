@@ -31,7 +31,7 @@ export const useMensajeAlAsistente = routeAction$( async ({ instruccion, mensaje
 
   try {
     const response = await openai.chat.completions.create({
-      model: "deepseek/deepseek-r1-0528:free",
+      model: "arcee-ai/trinity-mini:free",
       messages: [
         { role: 'system', content: instruccion },
         { role: 'user', content: mensaje }
