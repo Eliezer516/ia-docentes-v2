@@ -1,9 +1,12 @@
 import styles from './index.css?inline'
 import { component$, useVisibleTask$, useStylesScoped$, useSignal, $ } from '@builder.io/qwik';
-import { useLocation, routeLoader$, routeAction$, Form } from '@builder.io/qwik-city';
+import { useLocation, routeLoader$, routeAction$, Form, Link } from '@builder.io/qwik-city';
 import axios from 'axios'
 import OpenAI from "openai";
 import { Mensaje } from '~/components/Mensaje.jsx'
+import { Card } from '~/components/Card.jsx'
+
+
 
 export const useObtenerAsistentePorId = routeLoader$(async ({ params }) => {
   const id = params.id
@@ -69,10 +72,18 @@ export const useGuardarMensajeEnElHistorial = routeAction$(async ({ asistente_id
   }
 })
 
+export const useObtenerAsistentes = routeLoader$(async () => {
+  const apiUrl = "https://api-ia-docentes-v2.yonaikereliezerbarretomaterano.workers.dev/asistentes"
+  const response = await axios(apiUrl);
+  const { data } = await response
+  return data
+});
+
 export default component$(() => {
   useStylesScoped$(styles)
 
   const asistente = useObtenerAsistentePorId()
+  const asistentes = useObtenerAsistentes()
   const historial = useObtenerHistorial()
   const mensajeAlAsistente = useMensajeAlAsistente()
   const guardarMensajeEnElHistorial = useGuardarMensajeEnElHistorial()
@@ -82,6 +93,16 @@ export default component$(() => {
   const mensajes = useSignal(historial.value)
   const contenedorMensajesRef = useSignal()
   const botonDeEnviar = useSignal()
+
+  const offcanvasRef = useSignal()
+  const offcanvasInstance = useSignal()
+
+  useVisibleTask$( async () => {
+    const bootstrap = await import("bootstrap")
+    if (offcanvasRef.value) {
+      offcanvasInstance.value = new bootstrap.Offcanvas(offcanvasRef.value)
+    }
+  })
 
   useVisibleTask$(({ track }) => {
       track(() => mensajes.value); // Rastrea cambios en la lista de mensajes
@@ -163,8 +184,22 @@ export default component$(() => {
 
   return (
     <article class="card">
-      <header class="card-header">
+      <header class="card-header d-flex align-items-center">
         <h5>{asistente.value.titulo}</h5>
+        <button class="btn btn-primary ms-auto" onClick$={() => offcanvasInstance.value.show()}>
+          <div>&#8801;</div>
+        </button>
+        <div ref={offcanvasRef} class="offcanvas offcanvas-end" tabindex="-1" id="asistentes" aria-labelledby="asistentesLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="asistentesLabel">Asistentes</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            {asistentes.value.map(asistente => (
+              <Link href={`/asistente/${asistente.id}`} key={asistente.id} class="btn btn-primary w-100 mb-2">{asistente.titulo}</Link>
+            ))}
+          </div>
+        </div>
       </header>
       <div class="card-body" ref={contenedorMensajesRef}>        
         {mensajes.value?.map(mensaje => (

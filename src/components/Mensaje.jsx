@@ -10,6 +10,7 @@ export const Mensaje = component$(({ mensaje }) => {
   useStyles$(`
     .mensaje {
       overflow-x: auto;
+      white-space: pre-wrap;
     }
   `)
 
