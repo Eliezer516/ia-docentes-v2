@@ -1,6 +1,6 @@
 import styles from './index.css?inline'
 import { component$, useVisibleTask$, useStylesScoped$, useSignal, $ } from '@builder.io/qwik';
-import { useLocation, routeLoader$, routeAction$, Form, Link } from '@builder.io/qwik-city';
+import { useLocation, routeLoader$, routeAction$, Form, Link, useNavigate } from '@builder.io/qwik-city';
 import axios from 'axios'
 import OpenAI from "openai";
 import { Mensaje } from '~/components/Mensaje.jsx'
@@ -81,6 +81,7 @@ export const useObtenerAsistentes = routeLoader$(async () => {
 
 export default component$(() => {
   useStylesScoped$(styles)
+  const nav = useNavigate()
 
   const asistente = useObtenerAsistentePorId()
   const asistentes = useObtenerAsistentes()
@@ -104,21 +105,34 @@ export default component$(() => {
     }
   })
 
+
   useVisibleTask$(({ track }) => {
-      track(() => mensajes.value); // Rastrea cambios en la lista de mensajes
-      
+    // Rastreamos el historial que viene del servidor (loader)
+    track(() => historial.value);
+    // Actualizamos la señal local con el nuevo historial de la base de datos
+    mensajes.value = historial.value;
+  });
+
+  useVisibleTask$(({ track }) => {
+    // Rastreamos la señal de mensajes que se actualiza al cambiar de ruta
+    track(() => mensajes.value);
+
+    // Usamos un pequeño delay para permitir que Qwik renderice el nuevo DOM
+    setTimeout(() => {
+      // Buscamos todos los elementos con la clase que definiste
       const listaMensajes = contenedorMensajesRef.value?.querySelectorAll('.mensaje-item');
       const ultimoMensaje = listaMensajes?.[listaMensajes.length - 1];
 
       if (ultimoMensaje) {
-        // scrollIntoView con 'start' hace que el inicio del mensaje 
-        // se alinee con la parte superior del contenedor
+        // 'start' alinea el inicio del elemento con la parte superior del contenedor
         ultimoMensaje.scrollIntoView({
           behavior: 'smooth',
           block: 'start' 
         });
       }
-    });
+    }, 100); // Un margen ligeramente mayor ayuda a la estabilidad visual
+  });
+
 
   const enviarMensaje = $(async () => {
     const mensajeTexto = mensajeDelUsuario.value.trim();
@@ -213,7 +227,7 @@ export default component$(() => {
         </div>
         <div class="offcanvas-body">
           {asistentes.value.map(asistente => (
-            <Link href={`/asistente/${asistente.id}`} key={asistente.id} class="btn btn-primary w-100 mb-2">{asistente.titulo}</Link>
+            <Link onClick$={() => offcanvasInstance.value.hide()} href={`/asistente/${asistente.id}`} key={asistente.id} class="btn btn-primary w-100 mb-2">{asistente.titulo}</Link>
           ))}
         </div>
       </div>
