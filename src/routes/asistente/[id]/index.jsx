@@ -200,7 +200,7 @@ export default component$(() => {
     <>
       <article class="card chat">
         <header class="card-header d-flex align-items-center">
-          <h5>{asistente.value.titulo}</h5>
+          <span class="fs-4">{asistente.value.titulo}</span>
           <button class="btn btn-primary ms-auto" onClick$={() => offcanvasInstance.value.show()}>
             <div>&#8801;</div>
           </button>
