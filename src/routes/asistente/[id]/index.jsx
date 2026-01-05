@@ -183,39 +183,41 @@ export default component$(() => {
   });
 
   return (
-    <article class="card">
-      <header class="card-header d-flex align-items-center">
-        <h5>{asistente.value.titulo}</h5>
-        <button class="btn btn-primary ms-auto" onClick$={() => offcanvasInstance.value.show()}>
-          <div>&#8801;</div>
-        </button>
-        <div ref={offcanvasRef} class="offcanvas offcanvas-end" tabindex="-1" id="asistentes" aria-labelledby="asistentesLabel">
-          <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="asistentesLabel">Asistentes</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-          </div>
-          <div class="offcanvas-body">
-            {asistentes.value.map(asistente => (
-              <Link href={`/asistente/${asistente.id}`} key={asistente.id} class="btn btn-primary w-100 mb-2">{asistente.titulo}</Link>
-            ))}
-          </div>
+    <>
+      <article class="card chat">
+        <header class="card-header d-flex align-items-center">
+          <h5>{asistente.value.titulo}</h5>
+          <button class="btn btn-primary ms-auto" onClick$={() => offcanvasInstance.value.show()}>
+            <div>&#8801;</div>
+          </button>
+        </header>
+        <div class="card-body" ref={contenedorMensajesRef}>        
+          {mensajes.value?.map(mensaje => (
+            <div key={asistente.id} class="mensaje-item">
+              <Mensaje mensaje={mensaje} />
+            </div>
+          ))}
         </div>
-      </header>
-      <div class="card-body" ref={contenedorMensajesRef}>        
-        {mensajes.value?.map(mensaje => (
-          <div key={asistente.id} class="mensaje-item">
-            <Mensaje mensaje={mensaje} />
+        <footer class="card-footer">
+          <div class="mb-3">
+            <input type="text" value={asistente.value.instruccion} name="instruccion" hidden />
+            <textarea bind:value={mensajeDelUsuario} class="form-control shadow-none" name="mensaje" placeholder="Mensaje para el bot" rows={2}></textarea>
           </div>
-        ))}
+          <button ref={botonDeEnviar} onClick$={() => enviarMensaje()} class="btn btn-primary shadow-none w-100">Enviar</button>
+        </footer> 
+      </article>
+      <div ref={offcanvasRef} class="offcanvas offcanvas-end" tabindex="-1" id="asistentes" aria-labelledby="asistentesLabel">
+        <div class="offcanvas-header">
+          <h5 class="offcanvas-title" id="asistentesLabel">Asistentes</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+          {asistentes.value.map(asistente => (
+            <Link href={`/asistente/${asistente.id}`} key={asistente.id} class="btn btn-primary w-100 mb-2">{asistente.titulo}</Link>
+          ))}
+        </div>
       </div>
-      <footer class="card-footer">
-        <div class="mb-3">
-          <input type="text" value={asistente.value.instruccion} name="instruccion" hidden />
-          <textarea bind:value={mensajeDelUsuario} class="form-control" name="mensaje" placeholder="Mensaje para el bot" rows={2}></textarea>
-        </div>
-        <button ref={botonDeEnviar} onClick$={() => enviarMensaje()} class="btn btn-primary w-100">Enviar</button>
-      </footer> 
-    </article>
+    </>
   )
 });
 

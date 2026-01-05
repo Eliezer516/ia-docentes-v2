@@ -1,11 +1,9 @@
-.card {
+.card.chat {
   display: grid;
   height: 100dvh;
   grid-template-rows: auto 1fr auto;
 }
-.card-body {
+.card.chat .card-body {
   overflow-y: scroll;
   scroll-padding-top: 30px;
 }
-
-
