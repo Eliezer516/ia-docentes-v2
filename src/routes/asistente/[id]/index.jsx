@@ -1,5 +1,5 @@
 import styles from './index.css?inline'
-import { component$, useVisibleTask$, useStylesScoped$, useSignal, $ } from '@builder.io/qwik';
+import { component$, useVisibleTask$, useTask$, useStylesScoped$, useSignal, $ } from '@builder.io/qwik';
 import { useLocation, routeLoader$, routeAction$, Form, Link, useNavigate } from '@builder.io/qwik-city';
 import axios from 'axios'
 import OpenAI from "openai";
@@ -34,13 +34,13 @@ export const useMensajeAlAsistente = routeAction$( async ({ instruccion, mensaje
 
   try {
     const response = await openai.chat.completions.create({
-      model: "arcee-ai/trinity-mini:free",
+      model: "openai/gpt-oss-120b:free",
       messages: [
         { role: 'system', content: instruccion },
         { role: 'user', content: mensaje }
       ],
       reasoning: {
-        effort: "none"
+        effort: "minimal"
       }
     })
     return {
@@ -94,6 +94,7 @@ export default component$(() => {
   const mensajes = useSignal(historial.value)
   const contenedorMensajesRef = useSignal()
   const botonDeEnviar = useSignal()
+  const ultimoIdCargado = useSignal(asistente.value.id);
 
   const offcanvasRef = useSignal()
   const offcanvasInstance = useSignal()
@@ -103,36 +104,40 @@ export default component$(() => {
     if (offcanvasRef.value) {
       offcanvasInstance.value = new bootstrap.Offcanvas(offcanvasRef.value)
     }
+
+    if (historial.value) {
+      mensajes.value = historial.value;
+    }
   })
 
+  
+  useTask$(({ track }) => {
+    const nuevoHistorial = track(() => historial.value);
+    const idActual = track(() => asistente.value.id);
 
-  useVisibleTask$(({ track }) => {
-    // Rastreamos el historial que viene del servidor (loader)
-    track(() => historial.value);
-    // Actualizamos la señal local con el nuevo historial de la base de datos
-    mensajes.value = historial.value;
+    // Solo sobrescribimos "mensajes" si el ID del asistente cambió (navegación entre rutas)
+    if (idActual !== ultimoIdCargado.value) {
+      mensajes.value = nuevoHistorial;
+      ultimoIdCargado.value = idActual; // Actualizamos el ID de referencia
+    }
   });
 
   useVisibleTask$(({ track }) => {
     // Rastreamos la señal de mensajes que se actualiza al cambiar de ruta
     track(() => mensajes.value);
 
-    // Usamos un pequeño delay para permitir que Qwik renderice el nuevo DOM
-    setTimeout(() => {
-      // Buscamos todos los elementos con la clase que definiste
-      const listaMensajes = contenedorMensajesRef.value?.querySelectorAll('.mensaje-item');
-      const ultimoMensaje = listaMensajes?.[listaMensajes.length - 1];
+    // Buscamos todos los elementos con la clase que definiste
+    const listaMensajes = contenedorMensajesRef.value?.querySelectorAll('.mensaje-item');
+    const ultimoMensaje = listaMensajes?.[listaMensajes.length - 1];
 
-      if (ultimoMensaje) {
-        // 'start' alinea el inicio del elemento con la parte superior del contenedor
-        ultimoMensaje.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start' 
-        });
-      }
-    }, 100); // Un margen ligeramente mayor ayuda a la estabilidad visual
+    if (ultimoMensaje) {
+      // 'start' alinea el inicio del elemento con la parte superior del contenedor
+      ultimoMensaje.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start' 
+      });
+    }
   });
-
 
   const enviarMensaje = $(async () => {
     const mensajeTexto = mensajeDelUsuario.value.trim();
@@ -152,12 +157,8 @@ export default component$(() => {
       role: "user", 
       content: mensajeTexto 
     });
-
-    // 3. Agregar estado de carga (Placeholder)
-    mensajes.value = [
-      ...mensajes.value,
-      { role: "assistant", content: "Cargando...", isLoading: true },
-    ];
+    
+    mensajes.value = [...mensajes.value, { role: "assistant", content: "Cargando...", isLoading: true }]
 
     try {
       // 4. Petición a la IA
@@ -207,7 +208,7 @@ export default component$(() => {
         </header>
         <div class="card-body" ref={contenedorMensajesRef}>        
           {mensajes.value?.map(mensaje => (
-            <div key={asistente.id} class="mensaje-item">
+            <div key={mensaje.id} class="mensaje-item">
               <Mensaje mensaje={mensaje} />
             </div>
           ))}
@@ -229,6 +230,9 @@ export default component$(() => {
           {asistentes.value.map(asistente => (
             <Link onClick$={() => offcanvasInstance.value.hide()} href={`/asistente/${asistente.id}`} key={asistente.id} class="btn btn-primary w-100 mb-2">{asistente.titulo}</Link>
           ))}
+          <Link onClick$={() => offcanvasInstance.value.hide()} href="/asistentes" class="btn btn-primary w-100">
+            <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 32 32"><path fill="#fff" d="m23.265 24.381l.9-.894c4.164.136 4.228-.01 4.411-.438l1.144-2.785l.085-.264l-.093-.231c-.049-.122-.2-.486-2.8-2.965V15.5c3-2.89 2.936-3.038 2.765-3.461l-1.139-2.814c-.171-.422-.236-.587-4.37-.474l-.9-.93a20 20 0 0 0-.141-4.106l-.116-.263l-2.974-1.3c-.438-.2-.592-.272-3.4 2.786l-1.262-.019c-2.891-3.086-3.028-3.03-3.461-2.855L9.149 3.182c-.433.175-.586.237-.418 4.437l-.893.89c-4.162-.136-4.226.012-4.407.438l-1.146 2.786l-.09.267l.094.232c.049.12.194.48 2.8 2.962v1.3c-3 2.89-2.935 3.038-2.763 3.462l1.138 2.817c.174.431.236.584 4.369.476l.9.935a20.2 20.2 0 0 0 .137 4.1l.116.265l2.993 1.308c.435.182.586.247 3.386-2.8l1.262.016c2.895 3.09 3.043 3.03 3.466 2.859l2.759-1.115c.436-.173.588-.234.413-4.436m-11.858-6.524a4.957 4.957 0 1 1 6.488 2.824a5.014 5.014 0 0 1-6.488-2.824"></path></svg>
+          </Link>
         </div>
       </div>
     </>

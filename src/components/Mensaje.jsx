@@ -14,7 +14,7 @@ export const Mensaje = component$(({ mensaje }) => {
   `)
 
   const md = MarkdownIt().use(katex, {
-    allowInlineWithSpace: true
+    delimiters: "all"
   })
 
     const mensajeRef = useSignal()
@@ -22,7 +22,8 @@ export const Mensaje = component$(({ mensaje }) => {
   const descargarMensaje = $(async (id) => {
     mensajeRef.value?.removeAttribute("q:key")
     mensajeRef.value?.removeAttribute("q:id")
-    await snapdom.download(mensajeRef.value, { format: "jpg", filename: id })
+    const result = await snapdom(mensajeRef.value, { width: 690 });
+    await result.download({ format: "jpg", filename: id })
   })
 
   return (
