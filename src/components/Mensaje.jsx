@@ -14,7 +14,7 @@ export const Mensaje = component$(({ mensaje }) => {
   `)
 
   const md = MarkdownIt().use(katex, {
-    delimiters: "all"
+    mathFence: true
   })
 
     const mensajeRef = useSignal()

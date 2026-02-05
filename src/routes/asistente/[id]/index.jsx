@@ -34,7 +34,7 @@ export const useMensajeAlAsistente = routeAction$( async ({ instruccion, mensaje
 
   try {
     const response = await openai.chat.completions.create({
-      model: "openai/gpt-oss-120b:free",
+      model: "openrouter/free",
       messages: [
         { role: 'system', content: instruccion },
         { role: 'user', content: mensaje }
