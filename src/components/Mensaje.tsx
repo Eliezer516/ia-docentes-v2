@@ -1,6 +1,6 @@
 import { component$, useStyles$, useSignal, $ } from '@builder.io/qwik'
 import MarkdownIt from "markdown-it";
-import { katex } from '@mdit/plugin-katex'
+import mathjax3 from 'markdown-it-mathjax3'
 import copy from 'copy-text-to-clipboard';
 import TablerCopy from '~/icons/TablerCopy.tsx'
 import Download from '~/icons/Download.tsx'
@@ -13,11 +13,13 @@ export const Mensaje = component$(({ mensaje }) => {
     }
   `)
 
-  const md = MarkdownIt().use(katex, {
-    mathFence: true
-  })
+  const md = new MarkdownIt({
+      html: false,
+      linkify: true,
+      typographer: true
+    }).use(mathjax3)
 
-    const mensajeRef = useSignal()
+  const mensajeRef = useSignal()
 
   const descargarMensaje = $(async (id) => {
     mensajeRef.value?.removeAttribute("q:key")
